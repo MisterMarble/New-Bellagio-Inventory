@@ -135,8 +135,7 @@ async function init(){
 
   document.getElementById('finishBtn').addEventListener('click', finishSession);
   document.getElementById('addSlabBtn').addEventListener('click', openAddModal);
-  document.getElementById('addSlabForm').addEventListener('submit', addManualSlab);
-
+  document.getElementById('addSlabForm').addEventListener('submit', addManualSlab); (function(){const c=document.querySelector('#addSlabModal button[value="cancel"]');if(c){c.type='button';c.addEventListener('click',()=>{const f=document.getElementById('addSlabForm');try{f.reset();}catch(e){}const d=document.getElementById('addSlabModal');try{d.close();}catch(e){}});}})();
   // ---- Cancel button fix ----
   const dlg = document.getElementById('addSlabModal');
   const frm = document.getElementById('addSlabForm');
