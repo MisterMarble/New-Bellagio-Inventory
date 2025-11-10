@@ -25,7 +25,8 @@ function buildIndex(slabs){
   }
   renderCounters();
   // ADD THIS:
-  if (typeof rebuildListsFromStatus === 'function') rebuildListsFromStatus();}
+  if (typeof rebuildListsFromStatus === 'function') rebuildListsFromStatus();
+}
 
 function renderCounters(){
   let available = 0;
