@@ -59,7 +59,33 @@ function finishSession(){ const available=[], used=[]; for(const r of state.rowI
 
 function saveSession(){ const dump={ sessionId: state.sessionId, status: Array.from(state.statusMap.entries()), manual: state.rowIndex.filter(r=> r.source==='manual').map(r=> r.slab), timestamp: new Date().toISOString() }; localStorage.setItem('bellagio_session', JSON.stringify(dump)); toast('Session saved'); }
 function resumeSession(){ const raw = localStorage.getItem('bellagio_session'); if(!raw){ toast('No saved session'); return; } const dump = JSON.parse(raw); const manuals = dump.manual || []; for(const m of manuals){ if(!state.slabs.find(s=>s._rowid===m._rowid)){ state.slabs.push(m); } } buildIndex(state.slabs); state.statusMap = new Map(dump.status); renderCounters(); toast('Session resumed'); }
-function newSession(){ state.sessionId = makeSessionId(); state.slabs = state.slabs.filter(s=> s.source==='master'); buildIndex(state.slabs); toast('New session started'); }
+function newSession(){
+  // New ID & show it
+  state.sessionId = makeSessionId();
+  document.getElementById('session-id').textContent = state.sessionId;
+
+  // Clear saved session
+  localStorage.removeItem('bellagio_session');
+
+  // Keep ONLY master rows (drop manual additions)
+  state.slabs = state.slabs.filter(s => s.source === 'master');
+
+  // Hard reset UI and statuses
+  state.statusMap = new Map();
+  const a = document.getElementById('list-available');
+  const u = document.getElementById('list-used');
+  const r = document.getElementById('results');
+  const s = document.getElementById('search');
+  if (a) a.innerHTML = '';
+  if (u) u.innerHTML = '';
+  if (r) r.innerHTML = '';
+  if (s) s.value = '';
+
+  // Rebuild clean (all master rows = Untouched)
+  buildIndex(state.slabs);
+  renderCounters();
+  toast('New session started');
+}
 
 function wireInstall(){ window.addEventListener('beforeinstallprompt', e=>{ e.preventDefault(); state.deferredPrompt=e; const btn=document.getElementById('installBtn'); btn.hidden=false; btn.addEventListener('click', async()=>{ btn.hidden=true; state.deferredPrompt?.prompt(); await state.deferredPrompt?.userChoice; state.deferredPrompt=null; }, {once:true}); }); }
 
