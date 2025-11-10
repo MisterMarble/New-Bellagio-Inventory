@@ -109,5 +109,65 @@ function newSession(){
 
 function wireInstall(){ window.addEventListener('beforeinstallprompt', e=>{ e.preventDefault(); state.deferredPrompt=e; const btn=document.getElementById('installBtn'); btn.hidden=false; btn.addEventListener('click', async()=>{ btn.hidden=true; state.deferredPrompt?.prompt(); await state.deferredPrompt?.userChoice; state.deferredPrompt=null; }, {once:true}); }); }
 
-async function init(){ try{ state.sessionId = makeSessionId(); document.getElementById('session-id').textContent = state.sessionId; const master = await loadCSV('./data/slabs.csv'); state.masterCount = master.length; state.slabs = master.slice(); buildIndex(state.slabs); rebuildListsFromStatus(); }catch(err){ console.error(err); alert('Failed to load data/slabs.csv. Please ensure the file exists.'); } const search=document.getElementById('search'); search.addEventListener('input', ()=> renderSearchResults(searchRows(search.value))); search.addEventListener('keydown',(e)=>{ if(e.key==='Enter'){ const list=searchRows(search.value); if(list[0]){ markAvailable(list[0].key); } e.preventDefault(); }}); document.getElementById('finishBtn').addEventListener('click', finishSession); document.getElementById('addSlabBtn').addEventListener('click', openAddModal); document.getElementById('addSlabForm').addEventListener('submit', addManualSlab); (function(){const __dlg=document.getElementById('addSlabModal'),__frm=document.getElementById('addSlabForm'),__cancelBtn=__dlg&&__dlg.querySelector('button[value="cancel"]');if(__cancelBtn){__cancelBtn.setAttribute('type','button');__cancelBtn.addEventListener('click',()=>{__frm.reset();__dlg.close();});}__dlg&&__dlg.addEventListener('mousedown',e=>{if(e.target===__dlg){__frm.reset();__dlg.close();}}); document.getElementById('reviewBtn').addEventListener('click', openReview); document.getElementById('closeReview').addEventListener('click', ()=> document.getElementById('reviewModal').close()); document.getElementById('reviewSearch').addEventListener('input', refreshReview); document.getElementById('saveBtn').addEventListener('click', saveSession); document.getElementById('resumeBtn').addEventListener('click', resumeSession); document.getElementById('newBtn').addEventListener('click', newSession); if('serviceWorker' in navigator){ navigator.serviceWorker.register('./service-worker.js').catch(console.error); } wireInstall(); }
+async function init(){
+  try{
+    state.sessionId = makeSessionId();
+    document.getElementById('session-id').textContent = state.sessionId;
+    const master = await loadCSV('./data/slabs.csv');
+    state.masterCount = master.length;
+    state.slabs = master.slice();
+    buildIndex(state.slabs);
+    rebuildListsFromStatus();
+  }catch(err){
+    console.error(err);
+    alert('Failed to load data/slabs.csv. Please ensure the file exists.');
+  }
+
+  const search = document.getElementById('search');
+  search.addEventListener('input', ()=> renderSearchResults(searchRows(search.value)));
+  search.addEventListener('keydown',(e)=>{
+    if(e.key==='Enter'){
+      const list = searchRows(search.value);
+      if(list[0]) markAvailable(list[0].key);
+      e.preventDefault();
+    }
+  });
+
+  document.getElementById('finishBtn').addEventListener('click', finishSession);
+  document.getElementById('addSlabBtn').addEventListener('click', openAddModal);
+  document.getElementById('addSlabForm').addEventListener('submit', addManualSlab);
+
+  // ---- Cancel button fix ----
+  const dlg = document.getElementById('addSlabModal');
+  const frm = document.getElementById('addSlabForm');
+  const cancelBtn = dlg?.querySelector('button[value="cancel"]');
+  if(cancelBtn){
+    cancelBtn.type = 'button';
+    cancelBtn.addEventListener('click', ()=>{
+      frm.reset();
+      dlg.close();
+    });
+  }
+  if(dlg){
+    dlg.addEventListener('mousedown', e=>{
+      if(e.target===dlg){
+        frm.reset();
+        dlg.close();
+      }
+    });
+  }
+  // ---- end fix ----
+
+  document.getElementById('reviewBtn').addEventListener('click', openReview);
+  document.getElementById('closeReview').addEventListener('click', ()=> document.getElementById('reviewModal').close());
+  document.getElementById('reviewSearch').addEventListener('input', refreshReview);
+  document.getElementById('saveBtn').addEventListener('click', saveSession);
+  document.getElementById('resumeBtn').addEventListener('click', resumeSession);
+  document.getElementById('newBtn').addEventListener('click', newSession);
+
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.register('./service-worker.js').catch(console.error);
+  }
+  wireInstall();
+}
 init();
