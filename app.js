@@ -42,7 +42,25 @@ function renderSearchResults(rows){ const c=document.getElementById('results'); 
 
 function addToList(listId,key,type){ const r=state.rowIndex.find(x=>x.key===key); const ul=document.getElementById(listId); if(ul.querySelector(`[data-key="${CSS.escape(key)}"]`)) return; const li=document.createElement('li'); li.dataset.key=key; li.innerHTML=`<span><strong>${r.material_name||'—'}</strong> <span class="badge ${type}">${r.combined_id}</span> <span class="badge">${r.size_mm||'?'} • ${r.thickness_mm||'?'}mm</span> ${r.source==='manual'?'<span class="badge">manual</span>':''}</span><span>${type==='available'?'<button class="ghost" data-action="used">Mark Used</button>':'<button class="ghost" data-action="available">Mark Available</button>'} <button class="ghost" data-action="remove">Un-tick</button></span>`; ul.appendChild(li); li.querySelectorAll('button').forEach(b=> b.addEventListener('click',()=>{ const a=b.dataset.action; if(a==='remove'){ li.remove(); state.statusMap.set(key,'Untouched'); renderCounters(); refreshReview(); return; } if(a==='used'){ markUsed(key); refreshReview(); } if(a==='available'){ markAvailable(key); refreshReview(); } })); }
 function removeFromList(listId,key){ const ul=document.getElementById(listId); const el=ul.querySelector(`[data-key="${CSS.escape(key)}"]`); if(el) el.remove(); }
+// ---- MODEL 2 helper: full list in “Used” and live updates ----
+function rebuildListsFromStatus(){
+  const la = document.getElementById('list-available');
+  const lu = document.getElementById('list-used');
+  if (la) la.innerHTML = '';
+  if (lu) lu.innerHTML = '';
 
+  // Show EVERY master row under “Used” unless it's Available
+  for (const r of state.rowIndex){
+    const st = state.statusMap.get(r.key);
+    if (st === 'Available') {
+      addToList('list-available', r.key, 'available');
+    } else {
+      // Untouched + Used are both “not found yet” => stay in Used
+      addToList('list-used', r.key, 'used');
+    }
+  }
+}
+// ---- end helper ----
 function markAvailable(key){ state.statusMap.set(key,'Available'); addToList('list-available',key,'available'); removeFromList('list-used',key); renderCounters(); const s=document.getElementById('search'); s.focus(); s.select(); refreshResultsIfVisible(); }
 function markUsed(key){ state.statusMap.set(key,'Used'); addToList('list-used',key,'used'); removeFromList('list-available',key); renderCounters(); refreshResultsIfVisible(); }
 
