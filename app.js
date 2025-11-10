@@ -135,8 +135,7 @@ async function init(){
 
   document.getElementById('finishBtn').addEventListener('click', finishSession);
   document.getElementById('addSlabBtn').addEventListener('click', openAddModal);
-  document.getElementById('addSlabForm').addEventListener('submit', addManualSlab); (function(){const c=document.querySelector('#addSlabModal button[value="cancel"]');if(c){c.type='button';c.addEventListener('click',()=>{const f=document.getElementById('addSlabForm');try{f.reset();}catch(e){}const d=document.getElementById('addSlabModal');try{d.close();}catch(e){}});}})();
-  // ---- Cancel button fix ----
+  document.getElementById('addSlabForm').addEventListener('submit', addManualSlab); (function(){const c=document.querySelector('#addSlabModal button[value="cancel"]');if(c){c.type='button';c.addEventListener('click',()=>{const f=document.getElementById('addSlabForm');try{f.reset();}catch(e){}const d=document.getElementById('addSlabModal');try{d.close();}catch(e){}});}})(); (function(){const rm=()=>document.querySelectorAll('#list-used button[data-action="remove"],#list-available button[data-action="remove"]').forEach(b=>b.remove());rm();const U=document.getElementById('list-used'),A=document.getElementById('list-available');if(U)new MutationObserver(()=>rm()).observe(U,{childList:true,subtree:true});if(A)new MutationObserver(()=>rm()).observe(A,{childList:true,subtree:true});})();  // ---- Cancel button fix ----
   const dlg = document.getElementById('addSlabModal');
   const frm = document.getElementById('addSlabForm');
   const cancelBtn = dlg?.querySelector('button[value="cancel"]');
