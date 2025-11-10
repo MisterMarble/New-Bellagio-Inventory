@@ -27,6 +27,32 @@ input[type=search]:focus{outline:2px solid #2d6cdf}
 .list-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:12px;min-height:180px}
 .list-card h2{margin:0 0 10px;font-size:16px}
 #list-available li,#list-used li{list-style:none;padding:8px;border:1px dashed var(--border);border-radius:10px;margin-bottom:6px;display:flex;justify-content:space-between;gap:8px;background:#fff}
+/* Scrollable list windows for both boxes */
+#list-used,
+#list-available {
+  /* ~10–12 rows; tweak as you like */
+  max-height: 320px;
+  overflow-y: auto;
+  margin: 0;           /* reset default UL margin if present */
+  padding-left: 0;     /* keep list flush with card */
+  -webkit-overflow-scrolling: touch; /* smooth on iOS */
+  scrollbar-width: thin;             /* Firefox slim bar */
+}
+
+/* Optional: slim scrollbar styling (Chromium/WebKit) */
+#list-used::-webkit-scrollbar,
+#list-available::-webkit-scrollbar { width: 6px; }
+#list-used::-webkit-scrollbar-thumb,
+#list-available::-webkit-scrollbar-thumb {
+  background-color: rgba(0,0,0,0.2);
+  border-radius: 3px;
+}
+
+/* (Optional) smaller window on narrow screens */
+@media (max-width: 480px){
+  #list-used,
+  #list-available { max-height: 260px; }
+}
 .badge{font-size:12px;padding:2px 8px;border-radius:999px;border:1px solid var(--border);color:var(--muted)}
 .badge.available{background:#e7f6ea;color:#0a7f2e;border-color:#bfe4c8}
 .badge.used{background:#fdebea;color:#b9382c;border-color:#f5c2b8}
