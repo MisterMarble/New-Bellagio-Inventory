@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bellagio-cache-v2';
+const CACHE_NAME = 'bellagio-cache-v4';
 const PRECACHE = ['./','./index.html','./styles.css','./app.js','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png'];
 
 self.addEventListener('install', (e)=>{ self.skipWaiting(); e.waitUntil(caches.open(CACHE_NAME).then(c=>c.addAll(PRECACHE))); });
