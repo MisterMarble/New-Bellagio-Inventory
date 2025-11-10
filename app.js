@@ -24,7 +24,8 @@ function buildIndex(slabs){
     state.statusMap.set(r.key, prev.get(r.key) || (r.source==='master' ? 'Untouched' : 'Available'));
   }
   renderCounters();
-}
+  // ADD THIS:
+  if (typeof rebuildListsFromStatus === 'function') rebuildListsFromStatus();}
 
 function renderCounters(){
   let available = 0;
